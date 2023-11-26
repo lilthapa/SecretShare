@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Secret Share</title>
+</head>
+<style>
+    body {
+        padding: 25px;
+    }
+
+    .title {
+        color: #5c6ac4;
+    }
+</style>
+
+<body>
+    <h1 class="title">Secret Share</h1>
+    <h4>Create a shared secret</h4>
+    <textarea id="message" placeholder="Enter your secret message" rows="10"></textarea>
+    <br>
+    <button type="button" onclick="sendSecret()">submit</button>
+</body>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"
+    integrity="sha512-a+SUDuwNzXDvz4XrIcXHuCf089/iJAoN4lmrXJg18XnduKK6YlDHNRalv4yd1N40OKI80tFidF+rqTFKGPoWFQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+    const generateKey = (length = 15) => {
+        const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
+        let password = "";
+        for (let i = 0; i < length; i++) {
+            password += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return password;
+    };
+
+    function sendSecret() {
+        const message = document.getElementById("message").value;
+        const key = generateKey();
+        const encData = CryptoJS.AES.encrypt(message, key).toString();
+        const formData = new FormData();
+        formData.append("encData", encData)
+        fetch("/post", {
+            method: "POST",
+            body: formData,
+        })
+            .then(data => { alert(data); })
+    }
+</script>
+
+</html>
